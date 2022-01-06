@@ -1,0 +1,201 @@
+def create_board(n):
+    board = [["-"] * n for i in range(n)]
+    return board
+
+def print_board(board):
+    for j in board:
+        print(' | '.join([str(x) for x in j]))
+    print(20*"_")
+
+def get_X_from_user(board, n):
+    # get X from user
+    global userNow
+    UserX = input(">> Give coordinates for X (row, column) Example - 1,1: \n")
+    countComma = 0
+    for x in UserX:
+        if x == ",":
+            # print(x)
+            countComma += 1
+
+    if countComma > 1 or countComma == 0:
+        print("Error#1: Coordinates for X are not set correctly.")
+
+    else:
+        IndexUserX = UserX.split(",")
+        if not (IndexUserX[0].isdigit()) or not (IndexUserX[1].isdigit()):
+            print("Error#2: Coordinates for X are not set correctly, no digital coordinates. ")
+        else:
+            i = int(IndexUserX[0])
+            j = int(IndexUserX[1])
+            if not (i <= n-1) or not (j <= n-1):
+                print("Error#3: Coordinates for X are not set correctly, out of range. ")
+            else:
+                if board[i][j] != "-":
+                    print("Error#4: Coordinates for X are not set correctly, This cell is not free ")
+                else:
+                    board[i][j] = "X"
+                    userNow="O"
+
+def get_O_from_user(board, n):
+    # get O from user
+    global userNow
+    UserO = input(">> Give coordinates for O (row, column) Example - 1,1: \n")
+    countComma = 0
+    for o in UserO:
+        if o == ",":
+            countComma += 1
+
+    if countComma > 1 or countComma == 0:
+        print("Error#1: Coordinates for O are not set correctly.")
+
+    else:
+        IndexUserO = UserO.split(",")
+        if not (IndexUserO[0].isdigit()) or not (IndexUserO[1].isdigit()):
+            print("Error#2: Coordinates for O are not set correctly, no digital coordinates. ")
+        else:
+            i = int(IndexUserO[0])
+            j = int(IndexUserO[1])
+            if not (i <= n-1) or not (j <= n-1):
+                print("Error#3: Coordinates for O are not set correctly, out of range. ")
+            else:
+                if board[i][j] != "-":
+                    print("Error#4: Coordinates for O are not set correctly, This cell is not free ")
+                else:
+                    board[i][j] = "0"
+                    userNow ="X"
+
+
+def checking_winnings(board, n):
+    # Checking winnings
+    #userXO = "O"
+    board = board
+    winX = "XXX"
+    winO = "000"
+    global winning
+    winning = 0
+    # Checking row
+    for i in range(n):
+        checking_field = "".join(board[i][j] for j in range(n))
+        if checking_field.find(winX) >= 0 and winning == 0:
+            winning = 1
+            print(f"Congratulations! Won X! Row: i={i} ")
+            break
+        if checking_field.find(winO) >= 0 and winning == 0:
+            winning = 1
+            print(f"Congratulations! Won O! Row: i={i}")
+            break
+        # print(checking_field)
+
+    # Checking column
+    for i in range(n):
+        checking_field = "".join(board[j][i] for j in range(n))
+        if checking_field.find(winX) >= 0 and winning == 0:
+            winning = 1
+            print(f"Congratulations! Won X! Column: j={i} ")
+            break
+        if checking_field.find(winO) >= 0 and winning == 0:
+            winning = 1
+            print(f"Congratulations! Won O! Column: j={i}")
+            break
+
+        #print(checking_field)
+
+    # Cheking diagonal right to left
+    for dig in range((n - 1) ** 2):
+        checking_field = ""
+        for i in range(n):
+            for j in range(n):
+                if i + j == dig:
+                    checking_field = checking_field + board[i][j]
+                    if checking_field.find(winX) >= 0 and winning == 0:
+                        winning = 1
+                        print(f"Congratulations! Won X! Diagonal right to left: i={i} j={j}")
+                        break
+                    if checking_field.find(winO) >= 0 and winning == 0:
+                        winning = 1
+                        print(f"Congratulations! Won O! Diagonal right to left: i={i} j={j}")
+                        break
+
+        # print(checking_field)
+
+    # Cheking diagonal  left to right
+    for dig in range(-n, n):
+        checking_field = ""
+        for i in range(n):
+            for j in range(n):
+                if i - j == dig:
+                    checking_field = checking_field + board[i][j]
+                    if checking_field.find(winX) >= 0 and winning == 0:
+                        winning = 1
+                        print(f"Congratulations! Won X! Diagonal left to right: i={i} j={j}")
+                        break
+                    if checking_field.find(winO) >= 0 and winning == 0:
+                        winning = 1
+                        print(f"Congratulations! Won O! Diagonal left to right: i={i} j={j}")
+                        break
+        # print(checking_field)
+
+def checking_end_game(board, n):
+    # Checking end of the game
+    board = board
+    global endOfGame
+    all_field=""
+    for i in range(n):
+        checking_field = "".join(board[i][j] for j in range(n))
+        all_field =all_field+checking_field
+    if all_field.find("-") == -1 :
+        endGame = 1
+        #print(f"End of the game!")
+        #print(all_field)
+        endOfGame = 1
+    else:
+        #print(f"Not the end of the game")
+        #print(all_field)
+        endOfGame = 0
+    #return endOfGame
+
+n=3
+userNow = "X"
+winning =0
+board= create_board(n)
+print_board(board)
+endOfGame = 0
+# board[0][0]="X"
+# board[0][1]="0"
+# board[0][2]="X"
+# board[1][0]="0"
+# board[1][1]="0"
+# board[1][2]="-"
+# # #board[1][3]="-"
+# board[2][0]="X"
+# board[2][1]="O"
+# board[2][2]="-"
+# # board[2][3]="X"
+# # board[3][0]="X"
+# # board[3][3]="O"
+# print_board(board)
+
+while True :
+    checking_end_game(board, n)
+    if endOfGame == 1:
+        checking_winnings(board, n)
+        break
+
+    if winning ==0:
+        if userNow =="X":
+            get_X_from_user(board, n)
+            print_board(board)
+            checking_winnings(board, n)
+
+
+        else:
+            get_O_from_user(board,n)
+            print_board(board)
+            checking_winnings(board, n)
+
+
+
+    else:
+        #checking_winnings(board, n)
+        break
+print ("End of the game!!")

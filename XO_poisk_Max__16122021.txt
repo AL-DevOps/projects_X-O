@@ -1,0 +1,372 @@
+def Ar0_ArX (n):
+    Matrix1 = ["1","0"]
+    Matrix2 = ["11","10","01","00"]
+    Matrix3 = []
+    Matrix_Temp=[]
+
+    for Z2 in Matrix2:
+        for Z1 in Matrix1:
+            Matrix3.append(Z1 + Z2)
+    if n ==3:
+        Matrix_Temp= Matrix3
+    elif n==4:
+        for Z3 in Matrix3:
+            for Z1 in Matrix1:
+                Matrix_Temp.append(Z3+Z1)
+    elif n >= 5:
+        n=5
+        for Z3 in Matrix3:
+            for Z2 in Matrix2:
+                Matrix_Temp.append(Z3+Z2)
+
+
+         #  Ar0
+    Ar0 = [[0] * n for i in range(len(Matrix_Temp))]
+    ArX = [["X"] * n for i in range(len(Matrix_Temp))]
+    # print(f'Ar0={Ar0}')
+    # print(f'ArX={ArX}')
+    for i in range(len(Matrix_Temp)):
+        for j in range(n):
+            if Matrix_Temp[i][j] == "0":
+                Ar0[i][j]="-"
+                ArX[i][j] = "-"
+
+    Ar0.pop(0)
+    ArX.pop(0)
+
+    # print(f'len(D5)={len(Matrix_Temp)}, D5={Matrix_Temp}')
+    # print(f'len(Ar0)={len(Ar0)}, Ar0={Ar0}')
+    # print(f'len(ArX)={len(ArX)}, Ar0={ArX}')
+    return Ar0, ArX
+
+def next_move_0():
+    board = [
+        ["0", "X", "0"],
+        ["0", "0", "X"],
+        ["X", "X", "0"],
+        # ["0", "-", "0", "X", "-"],
+        # ["0", "X", "-", "0", "X"],
+        # ["X", "X", "-", "0", "0"],
+        # ["0", "-", "-", "X", "0"],
+        # ["-", "0", "-", "0", "-"],
+        # ["X", "-", "0", "0", "X", "0"],
+        # ["-", "X", "X", "0", "0", "-"],
+        # ["0", "X", "X", "0", "-", "-"],
+        # ["-", "0", "X", "X", "0", "X"],
+        # ["X", "0", "X", "X", "-", "0"],
+        # ["X", "0", "0", "0", "X", "-"],
+    ]
+
+    n=len(board)
+
+    Ar0, ArX = Ar0_ArX(n)
+
+
+
+    RatingTblSelf=[
+        [1, 2, 3, 4, 5],
+        [10.0, 1.0, 0.4, 0.1, 0.001]
+        ]
+
+    RatingTblOpponent=[
+        [1, 2, 3, 4, 5],
+        [5, 0.4, 0.2, 0.01, 0.001]
+        ]
+
+    Ar2temp0=[]
+    Ar2tempX = []
+    n2 = len(Ar0[0])
+
+    # Checking row "-" for 0
+    for i in range(n):
+        checking_field = "".join(board[i][j] for j in range(n))
+        for i2 in range(len(Ar0)):
+            checking_Ar0 = "".join(str(Ar0[i2][j2]) for j2 in range(n2))
+            if checking_field.find(checking_Ar0) >= 0 :
+                countspace=checking_Ar0.count("-")
+                start =0
+                for z in range(countspace):
+                    index_space=checking_Ar0.find("-", start)
+                    Ar2temp0.append([i, checking_field.find(checking_Ar0)+index_space, countspace, "-"])
+                    start = index_space+1
+
+
+    # Checking column "|" for 0
+    for i in range(n):
+        checking_field = "".join(board[j][i] for j in range(n))
+        for i2 in range(len(Ar0)):
+            checking_Ar0 = "".join(str(Ar0[i2][j]) for j in range(n2))
+            if checking_field.find(checking_Ar0) >= 0 :
+                countspace=checking_Ar0.count("-")
+                start =0
+                for z in range(countspace):
+                    delta_space=checking_Ar0.find("-", start)
+                    Ar2temp0.append([checking_field.find(checking_Ar0)+delta_space,i, countspace, "|"])
+                    start = delta_space+1
+
+
+    # Cheking diagonal right to left "/" for 0
+    for diog in range(2,(n - 1) * 2-1):
+        index_i= max (0, diog-n+1)
+        index_j= min (diog, n-1)
+        checking_field = str(index_i)+str(index_j)+":"
+
+
+        for i in range(n):
+            j= diog-i
+            if j >=0 and j<=n-1:
+                checking_field = checking_field + board[i][j]
+        # print(f"checking_field= {checking_field}")
+
+
+        for i2 in range(len(Ar0)):
+            checking_Ar0 = "".join(str(Ar0[i2][j]) for j in range(n2))
+
+
+            if checking_field.find(checking_Ar0) >= 0:
+                delta_field=checking_field.find(checking_Ar0)-3
+                countspace = checking_Ar0.count("-")
+                # print("+"*5)
+                # print(f"checking_Ar0 {checking_Ar0}")
+                # print(f"checking_field {checking_field}")
+                # print(f'countspace {countspace}')
+                # print("+" * 5)
+                start = 0
+                for z in range(countspace):
+                    delta_space = checking_Ar0.find("-", start)
+                    # print(f'countspace= {z}')
+                    # print(f"checking_Ar0 {checking_Ar0}")
+                    # print(f'checking_field= {checking_field}')
+                    # print(f"delta_field= {delta_field}")
+                    # print(f'delta_space= {delta_space}')
+                    # print(f'checking_field[i]={checking_field[0]}')
+                    # print(f'checking_field[j]={checking_field[1]}')
+                    # print("****"*20)
+                    Ar2temp0.append([int(checking_field[0])+delta_field+delta_space, int(checking_field[1])-delta_field-delta_space , countspace,"/"])
+                    start = delta_space + 1
+    # print(Ar2temp)
+
+    # Cheking diagonal  left to right "\" for 0
+    for diog in range(-n+3, n-2):
+        index_i = max(0, diog)
+        index_j = index_i-diog
+        checking_field = str(index_i)+str(index_j)+":"
+        for i in range(n):
+            j=i-diog
+            if j >=0 and j<=n-1:
+                checking_field = checking_field + board[i][j]
+        # print(f"checking_field\= {checking_field}")
+
+
+        for i2 in range(len(Ar0)):
+            checking_Ar0 = "".join(str(Ar0[i2][j]) for j in range(n2))
+
+
+            if checking_field.find(checking_Ar0) >= 0:
+                delta_field=checking_field.find(checking_Ar0)-3
+                countspace = checking_Ar0.count("-")
+                # print("+"*5)
+                # print(f"checking_Ar0 {checking_Ar0}")
+                # print(f"checking_field {checking_field}")
+                # print(f'countspace {countspace}')
+                # print("+" * 5)
+                start = 0
+                for z in range(countspace):
+                    delta_space = checking_Ar0.find("-", start)
+                    # print(f'countspace= {z}')
+                    # print(f"checking_Ar0 {checking_Ar0}")
+                    # print(f'checking_field= {checking_field}')
+                    # print(f"delta_field= {delta_field}")
+                    # print(f'delta_space= {delta_space}')
+                    # print(f'checking_field[i]={checking_field[0]}')
+                    # print(f'checking_field[j]={checking_field[1]}')
+                    # print("****"*20)
+                    Ar2temp0.append([int(checking_field[0])+delta_field+delta_space, int(checking_field[1])+delta_field+delta_space , countspace,'\\'])
+                    start = delta_space + 1
+    print(f"Ar2temp0={Ar2temp0}")
+
+
+    # Checking row "-" for X
+    for i in range(n):
+        checking_field = "".join(board[i][j] for j in range(n))
+        for i2 in range(len(ArX)):
+            checking_ArX = "".join(str(ArX[i2][j2]) for j2 in range(n2))
+            if checking_field.find(checking_ArX) >= 0 :
+                countspace=checking_ArX.count("-")
+                start =0
+                for z in range(countspace):
+                    index_space=checking_ArX.find("-", start)
+                    Ar2tempX.append([i, checking_field.find(checking_ArX)+index_space, countspace, "-"])
+                    start = index_space+1
+    # print(f' 001 row Ar2tempX={Ar2tempX}')
+
+    # Checking column "|" for X
+    for i in range(n):
+        checking_field = "".join(board[j][i] for j in range(n))
+        for i2 in range(len(ArX)):
+            checking_ArX = "".join(str(ArX[i2][j]) for j in range(n2))
+            if checking_field.find(checking_ArX) >= 0 :
+                countspace=checking_ArX.count("-")
+                start =0
+                for z in range(countspace):
+                    delta_space=checking_ArX.find("-", start)
+                    Ar2tempX.append([checking_field.find(checking_ArX)+delta_space,i, countspace, "|"])
+                    start = delta_space+1
+
+
+    # Cheking diagonal right to left "/" for X
+    for diog in range(2,(n - 1) * 2-1):
+        index_i= max (0, diog-n+1)
+        index_j= min (diog, n-1)
+        checking_field = str(index_i)+str(index_j)+":"
+
+        for i in range(n):
+            j= diog-i
+            if j >=0 and j<=n-1:
+                checking_field = checking_field + board[i][j]
+        # print(f"checking_field= {checking_field}")
+
+        for i2 in range(len(ArX)):
+            checking_ArX = "".join(str(ArX[i2][j]) for j in range(n2))
+
+            if checking_field.find(checking_ArX) >= 0:
+                delta_field=checking_field.find(checking_ArX)-3
+                countspace = checking_ArX.count("-")
+                # print("+"*5)
+                # print(f"checking_Ar0 {checking_Ar0}")
+                # print(f"checking_field {checking_field}")
+                # print(f'countspace {countspace}')
+                # print("+" * 5)
+                start = 0
+                for z in range(countspace):
+                    delta_space = checking_ArX.find("-", start)
+                    # print(f'countspace= {z}')
+                    # print(f"checking_Ar0 {checking_Ar0}")
+                    # print(f'checking_field= {checking_field}')
+                    # print(f"delta_field= {delta_field}")
+                    # print(f'delta_space= {delta_space}')
+                    # print(f'checking_field[i]={checking_field[0]}')
+                    # print(f'checking_field[j]={checking_field[1]}')
+                    # print("****"*20)
+                    Ar2tempX.append([int(checking_field[0])+delta_field+delta_space, int(checking_field[1])-delta_field-delta_space , countspace,"/"])
+                    start = delta_space + 1
+
+
+    # Cheking diagonal  left to right "\" for X
+    for diog in range(-n+3, n-2):
+        index_i = max(0, diog)
+        index_j = index_i-diog
+        checking_field = str(index_i)+str(index_j)+":"
+        for i in range(n):
+            j=i-diog
+            if j >=0 and j<=n-1:
+                checking_field = checking_field + board[i][j]
+        # print(f"checking_field\= {checking_field}")
+
+
+        for i2 in range(len(ArX)):
+            checking_ArX = "".join(str(ArX[i2][j]) for j in range(n2))
+
+
+            if checking_field.find(checking_ArX) >= 0:
+                delta_field=checking_field.find(checking_ArX)-3
+                countspace = checking_ArX.count("-")
+                # print("+"*5)
+                # print(f"checking_Ar0 {checking_Ar0}")
+                # print(f"checking_field {checking_field}")
+                # print(f'countspace {countspace}')
+                # print("+" * 5)
+                start = 0
+                for z in range(countspace):
+                    delta_space = checking_ArX.find("-", start)
+                    # print(f'countspace= {z}')
+                    # print(f"checking_Ar0 {checking_Ar0}")
+                    # print(f'checking_field= {checking_field}')
+                    # print(f"delta_field= {delta_field}")
+                    # print(f'delta_space= {delta_space}')
+                    # print(f'checking_field[i]={checking_field[0]}')
+                    # print(f'checking_field[j]={checking_field[1]}')
+                    # print("****"*20)
+                    Ar2tempX.append([int(checking_field[0])+delta_field+delta_space, int(checking_field[1])+delta_field+delta_space , countspace,'\\'])
+                    start = delta_space + 1
+    print(f"Ar2tempX={Ar2tempX}")
+
+    # print(f' 002 row+cow Ar2tempX={Ar2tempX}')
+    # print(f' 002 row+cow len(Ar2tempX)={len(Ar2tempX)}')
+    # print("-"*20)
+
+    # Put a rating depending on the number of moves to win in Ar2 =Ar2_0 +Ar2_X
+
+    Ar2_0 = [[0] * 3 for i in range(len(Ar2temp0))]
+    for i in range(len(Ar2temp0)) :
+        Ar2_0[i][0] = Ar2temp0[i][0]
+        Ar2_0[i][1] = Ar2temp0[i][1]
+        for j2 in range(len(RatingTblSelf[0])):
+             if Ar2temp0[i][2]== RatingTblSelf[0][j2]:
+                Ar2_0[i][2] = RatingTblSelf[1][j2]
+    # print(f"Ar2_0={Ar2_0}")
+
+    Ar2_X = [[0] * 3 for i in range(len(Ar2tempX))]
+    # print(f'len(Ar2tempX)={len(Ar2tempX)}')
+    # print(f"Ar2_X={Ar2_X}")
+    for i in range(len(Ar2tempX)) :
+        Ar2_X[i][0] = Ar2tempX[i][0]
+        Ar2_X[i][1] = Ar2tempX[i][1]
+        for j2 in range(len(RatingTblOpponent[0])):
+             if Ar2tempX[i][2]== RatingTblOpponent[0][j2]:
+                Ar2_X[i][2] = RatingTblOpponent[1][j2]
+    print(f"Ar2_X={Ar2_X}")
+
+    Ar2 = Ar2_X+Ar2_0
+
+    print(f"Ar2={Ar2}")
+
+    print("-"*20)
+
+
+    Ar2Max = []
+
+    # check if in Ar2new is [i=0][i=1] if not -  create
+    for i in range(len(Ar2)):
+        check=False
+        for i2 in range(len(Ar2Max)):
+            if Ar2[i][0] == Ar2Max[i2][0] and Ar2[i][1] == Ar2Max[i2][1] :
+                check=True
+        if check==False:
+                Ar2Max.append([Ar2[i][0],Ar2[i][1],0])
+
+    # summarize all rating in Ar2Max
+    for i in range(len(Ar2)):
+        for i2 in range(len(Ar2Max)):
+            if Ar2[i][0] == Ar2Max[i2][0] and Ar2[i][1] == Ar2Max[i2][1] :
+                Ar2Max[i2][2]+=Ar2[i][2]
+    print(f"Ar2Max={Ar2Max}")
+
+    # search for index with the highest rating in Ar2New
+    rating_max=0
+    index_i=0
+    index_j=0
+    ArNull=[]
+
+    if Ar2Max==ArNull:
+        for i in range(n):
+            for j in range(n):
+                if board[i][j]=="-":
+                    index_i = i
+                    index_j = j
+                    rating_max = 999
+                    break
+
+    else:
+        for i2 in range(len(Ar2Max)):
+            if Ar2Max[i2][2]>=rating_max:
+                rating_max=Ar2Max[i2][2]
+                index_i = Ar2Max[i2][0]
+                index_j = Ar2Max[i2][1]
+
+    return index_i, index_j
+    #print(f" next move to cell: {index_i},{index_j}, rating_max = {rating_max}")
+
+n=5
+index_i, index_j = next_move_0()
+print(f" next move to cell: {index_i},{index_j}")

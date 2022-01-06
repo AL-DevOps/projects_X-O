@@ -1,0 +1,43 @@
+
+Ar2=[
+    [0, 1, 0.5],
+    [0, 2, 0.5],
+    [1, 0, 0.3],
+    [1, 1, 0.3],
+    [1, 1, 0.5],
+    [1, 2, 0.3],
+    [2, 0, 0.3],
+    [2, 1, 0.3],
+    [2, 2, 0.3],
+    [2, 2, 0.5],
+     ]
+
+Ar2new = []
+
+# check if in Ar2new is [i=0][i=1] if not -  create
+for i in range(len(Ar2)):
+    check=False
+    for i2 in range(len(Ar2new)):
+        if Ar2[i][0] == Ar2new[i2][0] and Ar2[i][1] == Ar2new[i2][1] :
+            check=True
+    if check==False:
+            Ar2new.append([Ar2[i][0],Ar2[i][1],0])
+
+# summarize all rating
+for i in range(len(Ar2)):
+    for i2 in range(len(Ar2new)):
+        if Ar2[i][0] == Ar2new[i2][0] and Ar2[i][1] == Ar2new[i2][1] :
+            Ar2new[i2][2]+=Ar2[i][2]
+print(Ar2new)
+
+# search for index with the highest rating
+rating_max=0
+index_i=0
+index_j=0
+
+for i2 in range(len(Ar2new)):
+    if Ar2[i2][2]>=rating_max:
+        rating_max=Ar2[i2][2]
+        index_i = Ar2[i2][0]
+        index_j = Ar2[i2][1]
+print(f" next move to cell: {index_i},{index_j}")

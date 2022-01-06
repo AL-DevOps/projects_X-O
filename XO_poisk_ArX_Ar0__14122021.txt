@@ -1,0 +1,45 @@
+def Ar0_ArX (n):
+    Matrix1 = ["1","0"]
+    Matrix2 = ["11","10","01","00"]
+    Matrix3 = []
+    Matrix_Temp=[]
+
+    for Z2 in Matrix2:
+        for Z1 in Matrix1:
+            Matrix3.append(Z1 + Z2)
+    if n ==3:
+        Matrix_Temp= Matrix3
+    elif n==4:
+        for Z3 in Matrix3:
+            for Z1 in Matrix1:
+                Matrix_Temp.append(Z3+Z1)
+    elif n >= 5:
+        n=5
+        for Z3 in Matrix3:
+            for Z2 in Matrix2:
+                Matrix_Temp.append(Z3+Z2)
+
+
+         #  Ar0
+    Ar0 = [[0] * n for i in range(len(Matrix_Temp))]
+    ArX = [["X"] * n for i in range(len(Matrix_Temp))]
+    # print(f'Ar0={Ar0}')
+    # print(f'ArX={ArX}')
+    for i in range(len(Matrix_Temp)):
+        for j in range(n):
+            if Matrix_Temp[i][j] == "0":
+                Ar0[i][j]="-"
+                ArX[i][j] = "-"
+
+    Ar0.pop(0)
+    ArX.pop(0)
+
+    # print(f'len(D5)={len(Matrix_Temp)}, D5={Matrix_Temp}')
+    # print(f'len(Ar0)={len(Ar0)}, Ar0={Ar0}')
+    # print(f'len(ArX)={len(ArX)}, Ar0={ArX}')
+    return Ar0, ArX
+
+n=6
+Ar0, ArX = Ar0_ArX (n)
+print(f'len(Ar0)={len(Ar0)}, Ar0={Ar0}')
+print(f'len(ArX)={len(ArX)}, Ar0={ArX}')
